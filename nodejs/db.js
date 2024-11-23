@@ -15,11 +15,8 @@ function initTables(db) {
   fs.createReadStream(`${dbDirectory}/tables.csv`)
   .pipe(csv())
   .on('data', (data) => {
-    if (data['table_name'] in resObj) {
-      resObj[data['table_name']].push(data);
-    } else {
-      resObj[data['table_name']] = [data];
-    }
+    if (data['table_name'] in resObj) resObj[data['table_name']].push(data);
+    else resObj[data['table_name']] = [data];
     delete data['table_name'];
     return resObj;
   })
@@ -29,23 +26,21 @@ function initTables(db) {
       let primary_keys_count = 0, primary_keys_str = "";
       let foreign_keys_count = 0, foreign_keys_str = "";
 
-      let columns = resObj[table].reduce(
-        (accum, curr, idx) => {
-          let str = curr['column_name'];
-          str += (curr['type'].length > 0? ` ${curr['type']}` : "");
+      let columns = resObj[table].reduce((accum, curr, idx) => {
+          let curr_str = `${curr['column_name']}${(curr['type'].length > 0? ` ${curr['type']}` : "")}`;
           if (curr['primary_key'] === 'T') {
             primary_keys_str += `${primary_keys_count==0?'PRIMARY KEY (':''}${curr['column_name']},`;
             primary_keys_count++;
           } else {
-            str += (curr['not_null'] === 'T'? ` NOT NULL` : "");
-            str += (curr['unique'] === 'T'? ` UNIQUE` : "");
+            curr_str += (curr['not_null'] === 'T'? ` NOT NULL` : "");
+            curr_str += (curr['unique'] === 'T'? ` UNIQUE` : "");
           }
           if (curr['foreign_key'].length > 0) {
             foreign_keys_str += `FOREIGN KEY (${curr['column_name']}) REFERENCES ${curr['foreign_key']},`;
             foreign_keys_count++;
           }
-          str += (idx === resObj[table].length-1? '' : ', ');
-          return accum + str
+          curr_str += (idx === resObj[table].length-1? '' : ', ');
+          return accum + curr_str
         }, "");
       primary_keys_str = primary_keys_str.slice(0,-1) + ")"
       foreign_keys_str = foreign_keys_str.slice(0,-1)
@@ -54,11 +49,8 @@ function initTables(db) {
       let query = `CREATE TABLE ${table}(${columns}${primary_keys_count > 0? ", " + primary_keys_str : ""}${foreign_keys_count > 0? ", " + foreign_keys_str : ""})`;
       console.log('\x1b[36m%s\x1b[0m', "Execute query: " + query)
       db.run(query, (err) => {
-          if (err) {
-          console.error('Error creating table:', err);
-          } else {
-          console.log(`${table} table created successfully`);
-          }
+          if (err) console.error('Error creating table:', err);
+          else console.log(`${table} table created successfully`);
       });
     }
   });
