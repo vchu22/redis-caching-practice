@@ -1,0 +1,37 @@
+item_name,Brand,quantity,price,description
+BrandA Bluetooth Wireless Headphones,BrandA,10,50,"Features:
+- Stylish and ergonomic design
+- Noise cancellation
+- Ear cushions designed for comfort and durability.
+- Up to 48 hours of battery life
+- Fully charged within 2.5 hours"
+BrandB Bluetooth Wireless Headphones,BrandB,16,30,"Features:
+- Stylish and ergonomic design
+- Up to 36 hours of battery life
+- Fully charged within 1 hours"
+BrandC eReader,BrandC,50,30,"Features:
+- Anti-glare
+- Up to 120 hours of battery life
+- Fully charged within 6 hours"
+BrandC Android Tablet,BrandC,20,150,"Features:
+- Anti-glare
+- Up to 72 hours of battery life
+- Fully charged within 2 hours"
+"BrandE Windows Business Laptop, 15.6"" Display",BrandE,20,499.99,"Specs:
+- AMD Ryzen 7 7730U
+- 32 GB RAM
+- 2 TB SSD"
+"BrandA Windows Business Laptop, 15.6"" Display",BrandA,24,599.99,"Specs:
+- AMD Ryzen 7 7790U
+- 16 GB RAM
+- 3 TB SSD"
+"BrandE Windows Gaming Laptop, 16"" Display",BrandE,20,799.99,"Specs:
+- Intel Core i7-13700K
+- NVIDIA RTX 4050
+- 16 GB RAM
+- 1 TB SSD"
+Brand B Smartphone,BrandB,50,99.99,"Specs:
+- Android OS
+- Resolution: 1080 x 2400 
+- 8 GB RAM
+- 128 GB Storage"

@@ -1,0 +1,10 @@
+table_name,column_name,type,not_null,unique,primary_key,foreign_key
+product,id,INTEGER,T,T,T,
+product,item_name,VARCHAR,T,F,F,
+product,quantity,INTEGER,F,F,F,
+product,price,INTEGER,F,F,F,
+product,description,TEXT,F,F,F,
+category,id,INTEGER,T,T,T,
+category,name,VARCHAR,T,T,F,
+product_categories,prod_id,INTEGER,T,T,T,product(id)
+product_categories,cat_id,INTEGER,T,T,T,category(id)
