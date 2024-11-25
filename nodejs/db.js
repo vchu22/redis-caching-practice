@@ -67,10 +67,8 @@ async function initTables(db) {
 
         
         const keys = Object.keys(resObj[table])
-        console.log(resObj[table])
         let columns = keys.reduce((accum, column_name, idx) => {
             let curr_def = resObj[table][column_name];
-            console.log("column_name", column_name)
             let curr_str = `${column_name}${(curr_def['type'].length > 0? ` ${curr_def['type']}` : "")}`;
             if (curr_def['primary_key'] === 'T') {
               primary_keys_str += `${primary_keys_count==0?'PRIMARY KEY (':''}${column_name},`;
@@ -91,10 +89,9 @@ async function initTables(db) {
             } else {
               curr_def['foreign_key'] = null;
             }
-            curr_str += (idx === resObj[table].length-1? '' : ', ');
+            curr_str += (idx === keys.length-1? '' : ', ');
             return accum + curr_str
           }, "");
-        console.log(columns)
         primary_keys_str = primary_keys_str.slice(0,-1) + ")"
         foreign_keys_str = foreign_keys_str.slice(0,-1)
 
