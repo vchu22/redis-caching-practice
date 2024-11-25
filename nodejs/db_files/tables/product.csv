@@ -1,6 +1,14 @@
 item_name,brand,quantity,price,description
-BrandA Bluetooth Wireless Headphones,BrandA,10,50,
-BrandB Bluetooth Wireless Headphones,BrandB,16,30,
+BrandA Bluetooth Wireless Headphones,BrandA,10,50,"Features:
+- Noise Cancellation
+- Bluetooth Connection
+- Battery life up to 72 hours
+- Fully charged within 2 hours"
+BrandB Bluetooth Wireless Headphones,BrandB,16,30,"Features:
+- Noise Cancellation
+- Bluetooth Connection
+- Battery life up to 56 hours
+- Fully charged within 1 hours"
 BrandC eReader,BrandC,50,30,
 BrandC Android Tablet,BrandC,20,150,
 "BrandE Windows Business Laptop, 15.6"" Display",BrandE,20,499.99,

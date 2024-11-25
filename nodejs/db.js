@@ -31,7 +31,7 @@ async function populateData(db, tableSpecs) {
         switch (tableSpecs[table][key]['type']) {
           case 'TEXT':
           case 'VARCHAR':
-            return `"${data[key]}"`
+            return `'${data[key]}'`
           case 'INTEGER':
           case 'NUMERIC':
             return data[key]
@@ -39,8 +39,7 @@ async function populateData(db, tableSpecs) {
       })
       const query = `INSERT INTO ${table}(${columns}) VALUES(${values})`
       runQuery(db, query)
-    })
-    .on('end', () => {});
+    });
   });
 }
 
