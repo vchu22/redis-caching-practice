@@ -5,8 +5,8 @@ const csv = require('csv-parser');
 const dbFile = './test.db'
 const dbDirectory = './db_files';
 
-async function runQuery(db, query) {
-  db.run(query, (err) => {
+const runQuery = (db, query) => {
+  return db.run(query, (err) => {
     if (err) {
       console.log('\x1b[31m%s\x1b[0m', `Query Failed: ${query}`)
       console.error(err)
@@ -14,33 +14,21 @@ async function runQuery(db, query) {
     else {
       console.log('\x1b[36m%s\x1b[0m', `Query Success: ${query}`)
     };
-  })
+  });
 }
 
-async function populateData(db, tableSpecs) {
-  let files = fs.readdirSync(`${dbDirectory}/tables`);
-  
-  files.forEach(filename => {
-    const table = filename.split('.').slice(0, -1).join('.');
-    
-    fs.createReadStream(`${dbDirectory}/tables/${filename}`)
-    .pipe(csv())
-    .on('data', (data) => {
-      const columns = Object.keys(data)
-      const values = columns.map((key) => {
-        switch (tableSpecs[table][key]['type']) {
-          case 'TEXT':
-          case 'VARCHAR':
-            return `'${data[key]}'`
-          case 'INTEGER':
-          case 'NUMERIC':
-            return data[key]
-        }
-      })
-      const query = `INSERT INTO ${table}(${columns}) VALUES(${values})`
-      runQuery(db, query)
-    });
+// Function to initialize the database
+async function initSQLiteDatabase() {
+  // Check if the database file exists
+  if (fs.existsSync(dbFile)) {
+    // Delete the database file to reset it
+    fs.unlinkSync(dbFile);
+  }
+
+  const db = new sqlite3.Database(dbFile, sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
+    if (err) return console.error(err.message);
   });
+  return db;
 }
 
 async function initTables(db) {
@@ -63,7 +51,6 @@ async function initTables(db) {
       for (const table in resObj){
         let primary_keys_count = 0, primary_keys_str = "";
         let foreign_keys_count = 0, foreign_keys_str = "";
-
         
         const keys = Object.keys(resObj[table])
         let columns = keys.reduce((accum, column_name, idx) => {
@@ -103,24 +90,47 @@ async function initTables(db) {
   })
 }
 
-// Function to initialize the database
-async function initSQLiteDatabase() {
-  // Check if the database file exists
-  if (fs.existsSync(dbFile)) {
-    // Delete the database file to reset it
-    fs.unlinkSync(dbFile);
-  }
-
-  const db = new sqlite3.Database(dbFile, sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
-    if (err) return console.error(err.message);
+async function populateData(db, tableSpecs) {
+  let files = fs.readdirSync(`${dbDirectory}/tables`);
+  
+  files.forEach(filename => {
+    const table = filename.split('.').slice(0, -1).join('.');
+    
+    fs.createReadStream(`${dbDirectory}/tables/${filename}`)
+    .pipe(csv())
+    .on('data', (data) => {
+      const columns = Object.keys(data)
+      const values = columns.map((key) => {
+        switch (tableSpecs[table][key]['type']) {
+          case 'TEXT':
+          case 'VARCHAR':
+            return `'${data[key]}'`
+          case 'INTEGER':
+          case 'NUMERIC':
+            return data[key]
+        }
+      })
+      const query = `INSERT INTO ${table}(${columns}) VALUES(${values})`
+      runQuery(db, query)
+    });
   });
-  // initialize the tables
-  initTables(db).then((tableSpecs) => {
-    populateData(db, tableSpecs);
-  })
-  return db;
 }
 
+const listRows = async (db, tableName) => {
+    const query = `SELECT * FROM ${tableName}`;;
+    return await new Promise((resolve, reject) => {
+      db.all(query, [], (err, rows) => {
+        if (err) {
+            reject(err);
+        }
+        resolve(rows);
+    })});
+};
+
 module.exports = {
-    initSQLiteDatabase
+    initSQLiteDatabase,
+    runQuery,
+    initTables, 
+    populateData,
+    listRows
 }
