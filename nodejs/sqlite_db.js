@@ -116,21 +116,33 @@ async function populateData(db, tableSpecs) {
   });
 }
 
-const listRows = async (db, tableName) => {
-    const query = `SELECT * FROM ${tableName}`;;
-    return await new Promise((resolve, reject) => {
-      db.all(query, [], (err, rows) => {
-        if (err) {
-            reject(err);
-        }
-        resolve(rows);
-    })});
+const listAllRows = async (db, tableName) => {
+  const query = `SELECT * FROM ${tableName}`;
+  return await new Promise((resolve, reject) => {
+    db.all(query, [], (err, rows) => {
+      if (err) {
+          reject(err);
+      }
+      resolve(rows);
+  })});
 };
+
+const listFilteredItems = async (db, tableName, criteria) => {
+  const query = `SELECT * FROM ${tableName} WHERE ${Object.keys(criteria).map(k => `${k}="${criteria[k]}"`)}`;
+  return await new Promise((resolve, reject) => {
+    db.all(query, [], (err, rows) => {
+      if (err) {
+          reject(err);
+      }
+      resolve(rows);
+  })});
+}
 
 module.exports = {
     initSQLiteDatabase,
     runQuery,
     initTables, 
     populateData,
-    listRows
+    listAllRows,
+    listFilteredItems
 }

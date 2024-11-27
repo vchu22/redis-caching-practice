@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const {initSQLiteDatabase, initTables, populateData, listRows} = require("./sqlite_db")
+const {initSQLiteDatabase, initTables, populateData, listFilteredItems} = require("./sqlite_db")
 
 const port = 3000;
 
@@ -13,12 +13,21 @@ let db;
         populateData(db, tableSpecs);
     })})();
 
+// Middleware to parse URL-encoded request bodies
+app.use(express.urlencoded({ extended: true }));
+
+// API routes declarations
 app.get("/", (req, res) => {
     res.send("Hello from Node API");
 })
 
 app.get("/all-items", async (req, res) => {
-    res.send(await listRows(db, 'product'));
+    res.send(await listAllRows(db, 'product'));
+})
+
+app.get("/filter-items/", async (req, res) => {
+    const rows = await listFilteredItems(db, 'product', req.query)
+    res.send(rows)
 })
 
 app.listen(port, () => {
